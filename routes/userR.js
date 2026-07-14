@@ -28,7 +28,7 @@ router.get("/", auth, async (req, res) => {
 
 router.post("/register", async (req, res) => {
     const { username, password } = req.body
-
+    console.log(req.body)
     try {
         const Uzer = await Users.findOne({username: username})
         if(Uzer) return res.json("Username Exist").status(400)
