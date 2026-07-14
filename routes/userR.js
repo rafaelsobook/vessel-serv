@@ -17,7 +17,7 @@ function auth(req,res, next){
         return res.json('did not pass authentication')
     }
 }
-router.get("/", auth, async (req, res) => {
+router.get("/", async (req, res) => {
     try {
         const allusers = await Users.find()
         res.send(allusers)
