@@ -50,7 +50,7 @@ router.post("/register", async (req, res) => {
 
 router.post("/login", async (req, res) => {
     const {username, password} = req.body
-
+    console.log(req.body)
     const validPerson = await Users.findOne({username})
     if(!validPerson) return res.json("norecord")
 
