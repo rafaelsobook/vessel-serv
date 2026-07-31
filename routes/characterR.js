@@ -88,7 +88,7 @@ router.post("/save", auth, async (req, res) => {
                 skillCoolDown: 2000,
                 demand: [{ name: "mp", minCost: 1, cost: 0.3 }],
                 effects: { effectType: "buff", dmgPm: 0, plusDmg: 0, chance: 0, bashPower: 0 },
-                skillrank: 6,
+                skillrank: 0,
                 upgradePlus: 60,
                 desc: "You can conceal and show your aura, best to do when you want someone to easily spot you in certain places. Your aura density depends on your magic force.",
             }],
@@ -271,9 +271,16 @@ function generateAptitudes(luckPercentage = 0.3) {
         { name: 'light',    weight: 0.25 },
         { name: 'darkness', weight: 0.15 },
     ]
-    return elements
+    let result = elements
         .filter(el => Math.random() < luckPercentage * el.weight)
         .map(el => ({ element: el.name, level: 1 }))
+
+    if (result.length === 0) {
+        const fallback = elements[Math.floor(Math.random() * elements.length)]
+        result = [{ element: fallback.name, level: 1 }]
+    }
+
+    return result
 }
 
 module.exports = router
