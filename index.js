@@ -5,6 +5,21 @@ const PORT = process.env.PORT || 8100
 
 const dbCon = require("./dbcon.js")
 
+// Express 5 already forwards a rejected async route handler to its own
+// error-handling middleware (a real crash-safety improvement over Express 4),
+// so a single bad request/route can't take the whole process down. These two
+// are the remaining gap: anything that rejects/throws outside the request
+// lifecycle (a stray fire-and-forget promise, a bug in a .then() callback,
+// etc.) has nothing else to catch it. Logging instead of letting the
+// platform's default (silently exit/restart) makes prod failures visible
+// instead of just showing up as an unexplained downtime blip.
+process.on("unhandledRejection", (reason) => {
+    console.error("[unhandledRejection]", reason)
+})
+process.on("uncaughtException", (error) => {
+    console.error("[uncaughtException]", error)
+})
+
 app.use(cors())
 app.use(express.json({limit: '3mb'}))
 app.use(express.urlencoded({extended: false}))

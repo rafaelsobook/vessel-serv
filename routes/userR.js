@@ -51,25 +51,32 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     const {username, password} = req.body
     console.log(req.body)
-    const validPerson = await Users.findOne({username})
-    if(!validPerson) return res.json("norecord")
+    try {
+        const validPerson = await Users.findOne({username})
+        if(!validPerson) return res.json("norecord")
 
-    const isPassValid = await bcrypt.compare(password, validPerson.password)
-    if(!isPassValid) return res.json("norecord")
+        const isPassValid = await bcrypt.compare(password, validPerson.password)
+        if(!isPassValid) return res.json("norecord")
 
-    const token = jwt.sign({id: validPerson._id}, process.env.JWT_SEC)
+        const token = jwt.sign({id: validPerson._id}, process.env.JWT_SEC)
 
-    res.json({token, details: validPerson}).status(200)
+        res.json({token, details: validPerson}).status(200)
+    } catch (error) {
+        res.status(400).json("norecord")
+    }
 })
 
 router.get("/:id", auth, async (req, res) => {
-   
-    const validPerson = await Users.findById(req.params.id)
-    if(!validPerson) return res.json("norecord")
+    try {
+        const validPerson = await Users.findById(req.params.id)
+        if(!validPerson) return res.json("norecord")
 
-    const token = jwt.sign({id: validPerson._id}, process.env.JWT_SEC)
+        const token = jwt.sign({id: validPerson._id}, process.env.JWT_SEC)
 
-    res.json({token, details: validPerson}).status(200)
+        res.json({token, details: validPerson}).status(200)
+    } catch (error) {
+        res.status(400).json("norecord")
+    }
 })
 
 router.patch("/:id", async (req,res) => {

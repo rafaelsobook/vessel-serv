@@ -257,10 +257,13 @@ router.delete("/delete/:id", async (req,res) => {
         const theChar = await Character.findById(req.params.id)
         if(!theChar) return res.json({message: "not found char"})
         await Character.findByIdAndDelete(req.params.id)
+        res.json(await Character.find())
     }catch(err){
-        res.json(err).status(400)
+        // used to fall through to a second res.json() call after this catch
+        // (a response had already been sent) - that throws its own
+        // ERR_HTTP_HEADERS_SENT error on top of whatever failed above
+        res.status(400).json(err)
     }
-    res.json(await Character.find())
 })
 
 function generateAptitudes(luckPercentage = 0.3) {
