@@ -16,6 +16,13 @@ const charSchema = new Schema({
         atkSpd: {type: Number, default: .9},
     },
     lvl: { type: Number, default: 1},
+    // EXP -> Level system (client/src/charactersystem/characterstate.js's
+    // gainExp) - separate from the existing Rank system (rank field below),
+    // which keeps working exactly as it already did. statPoints is the
+    // spendable pool statsSystem.js's upgrade-btn UI now draws from, +1
+    // granted per level.
+    exp: { type: Number, default: 0},
+    statPoints: { type: Number, default: 0},
     rank: { rankNumber: Number, curr: Number, pointsToRank: { type: Number, default: 12}, rankLabel: String },
     hp: { type: Number, default: 50},
     maxHp: { type: Number, default: 50},
