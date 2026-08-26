@@ -43,7 +43,9 @@ router.post("/save", auth, async (req, res) => {
 
         const exists = await Character.findOne({ name })
         if (exists) return res.json("exist")
-
+        const lifeRandomHp = 100 + (Math.floor(100 * Math.random()))
+        const lifeRandomMp = 100 + (Math.floor(100 * Math.random()))
+        const lifeRandomSp = 100 + (Math.floor(100 * Math.random()))
         const newCharacter = new Character({
             owner,
             name,
@@ -57,9 +59,9 @@ router.post("/save", auth, async (req, res) => {
             skinColor,
             stats: { weapon: 1, accuracy: 1, critical: 1, dex: 1, strength: 1, magic: 1, spd: 3.4, atkSpd: 0.9 },
             lvl: 1,
-            hp: 5000, maxHp: 5000,
-            mp: 9000, maxMp: 9000,
-            sp: 1000, maxSp: 1000,
+            hp: lifeRandomHp, maxHp: lifeRandomHp,
+            mp: lifeRandomMp, maxMp: lifeRandomMp,
+            sp: lifeRandomSp, maxSp: lifeRandomSp,
             defeatedFoes: [
                 { foeType: "monster", total: 0 },
                 { foeType: "human", total: 0 },
@@ -79,7 +81,11 @@ router.post("/save", auth, async (req, res) => {
                 pointsToClaim: 1,
                 pointsForUpgrade: 1,
                 element: "normal",
-                requireMode: "any",
+                // requireMode intentionally OMITTED, not set to "any" - skillsui.js's
+                // gate is `if(skill.requireMode && charState.mode !== skill.requireMode)`,
+                // only skipped when requireMode is FALSY. "any" is treated as a literal
+                // required mode (character must be in mode "any", which never happens),
+                // not a wildcard - same footgun documented in skillsData.js.
                 skillType: "na",
                 animationLoop: false,
                 displayName: "Flex aura",
@@ -247,6 +253,34 @@ router.patch("/myquest/add/:id", auth, async (req, res) => {
         const newQuests = character.quests
         const theCharac = await Character.findByIdAndUpdate(req.params.id, { quests: newQuests}, {new: true})
         res.json(theCharac)
+    } catch (error) {
+        res.json(error).status(400)
+    }
+})
+// npc-defeat title rewards (duelSystem.js's receiveTitle, client/src/components/titleUI.js) -
+// only one LIVING character may hold a given titleId at once. Deliberately
+// no separate "who holds this title" table - just query the live Character
+// collection directly, so a title frees itself up automatically the moment
+// its holder's document is deleted (DELETE /delete/:id below), with no
+// extra cleanup hook needed anywhere. Known trade-off: the findOne-then-push
+// below is two separate steps, not one atomic operation, so there's a small
+// race window if two players claimed the exact same title in the same
+// instant - acceptable at this project's scale (a duel is inherently 1-on-1,
+// not a source of real simultaneous claims), not worth a dedicated
+// unique-indexed collection for.
+router.patch("/claim-title/:id", auth, async (req, res) => {
+    try {
+        const { titleId, dn } = req.body
+        const character = await Character.findById(req.params.id)
+        if(!character) return res.json("notfound").status(400)
+
+        const alreadyHeld = await Character.findOne({ "titles.titleId": titleId })
+        if(alreadyHeld) return res.json({ claimed: false, reason: "taken" })
+
+        character.titles.push({ titleId, dn })
+        const updated = await Character.findByIdAndUpdate(req.params.id, { titles: character.titles }, { new: true })
+
+        res.json({ claimed: true, titles: updated.titles })
     } catch (error) {
         res.json(error).status(400)
     }

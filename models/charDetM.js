@@ -4,7 +4,7 @@ const charSchema = new Schema({
     owner: String,
     name: String,
     currentspeechId: { type:Number, default: 1},
-    mode: { type: String, default: "idle" }, // idle// fighting // structed // paralized // 
+    mode: { type: String, default: "idle" }, // idle// fighting // structed // paralized //
     stats: { 
         weapon: Number, 
         accuracy: Number,
