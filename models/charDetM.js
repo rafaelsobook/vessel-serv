@@ -45,7 +45,7 @@ const charSchema = new Schema({
     cloth: String,
     pants: String,
     hair: String,
-    skinColor: {r: Number, g: Number, b: Number, name: String},
+    skinColor: String, // one of SKIN_TEXTURES' keys in client/src/constants/skinColors.js, e.g. "skin1"
     hairColor: {r: Number, g: Number, b: Number},
     clothColor: {r: Number, g: Number, b: Number},
     pantsColor: {r: Number, g: Number, b: Number},
@@ -74,6 +74,8 @@ const charSchema = new Schema({
     race: { type: String, default: "human" },
     characterType: { type: String, default: "player"},
     lastSpoken: {type: String, default: "none"},
+    achievements: { type: Array, default: [] },
+    duelHistory: { type: Array, default: [] }, // {opponentName: "", result: "win"//"lose"//"draw", date: Date.now() }
 })
 
 module.exports = CharModel = model("character", charSchema)
