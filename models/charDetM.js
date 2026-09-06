@@ -1,6 +1,7 @@
 const { Schema, model } = require("mongoose")
 
 const charSchema = new Schema({
+    gender: { type: String, default: "male" }, // "male"/"female" - client/src/charactersystem/createcharacter.js's createAnimeBody branches the whole body/hair/outfit mesh selection on this
     owner: String,
     name: String,
     currentspeechId: { type:Number, default: 1},

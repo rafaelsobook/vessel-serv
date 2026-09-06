@@ -39,7 +39,7 @@ router.get("/:id", auth, async (req, res) => {
 router.post("/save", auth, async (req, res) => {
 
     try {
-        const { owner, name, cloth, pants, hair,hairColor, boots, clothColor, pantsColor, skinColor } = req.body
+        const { owner, name, gender, cloth, pants, hair,hairColor, boots, clothColor, pantsColor, skinColor } = req.body
 
         const exists = await Character.findOne({ name })
         if (exists) return res.json("exist")
@@ -49,6 +49,9 @@ router.post("/save", auth, async (req, res) => {
         const newCharacter = new Character({
             owner,
             name,
+            // falls back to "male" if the client somehow didn't send one -
+            // matches charDetM.js's own schema default
+            gender: gender || "male",
             hairColor,
             cloth,
             pants,
