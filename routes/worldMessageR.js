@@ -38,5 +38,19 @@ router.post("/save", auth, async (req, res) => {
     }
 })
 
+// wipes every persisted world chat message - same auth gate the read/write
+// routes above already use (any valid logged-in token, not an admin-only
+// check - there's no such role/permission concept anywhere else in this
+// file to hook into). Irreversible: no soft-delete/trash here, matching
+// this route file's own existing style (POST /save is a straight
+// Messages.save() with no undo either).
+router.delete("/clear", auth, async (req, res) => {
+    try {
+        const result = await Messages.deleteMany({})
+        res.json({ deletedCount: result.deletedCount })
+    } catch (error) {
+        res.send(error).status(400)
+    }
+})
 
 module.exports = router
