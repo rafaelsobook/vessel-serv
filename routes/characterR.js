@@ -110,7 +110,7 @@ router.post("/save", auth, async (req, res) => {
             monsSoul: 1,
             coins: 0,
             assets: { krit: 0, fins: 0, dramite: 0 },
-            survival: { hunger: 100, sleep: 100 },
+            survival: { hunger: 100, sleep: 100, bodytemp: 35 },
             aptitude: generateAptitudes(),
             monsterKilled: 0,
             defeatedMonsters: [],

@@ -60,7 +60,10 @@ const charSchema = new Schema({
     // regens: { sp: {type: Number, default: 0}, hp: {type: Number, default: 0}, mana: {type: Number, default: 0} },
     monsSoul: { type: Number, default: 1}, // same like points system
 
-    survival: { hunger: {type: Number, default: 100}, sleep: {type: Number, default: 100} },
+    // bodytemp: third survival stat alongside hunger/sleep. Default matches
+    // client constants/weather.js BODY_TEMP_NORMAL - a character is created
+    // comfortable, not at 0 (which the client would read as lethal cold).
+    survival: { hunger: {type: Number, default: 100}, sleep: {type: Number, default: 100}, bodytemp: {type: Number, default: 35} },
     aptitude: { type: Array, default: [] },
     monsterKilled: { type: Number, default: 0},
     defeatedMonsters: { type: Array, default: []}, // name of monsters
@@ -73,6 +76,58 @@ const charSchema = new Schema({
     quests: {type: Array, default: []}, //
     clearedQuests: {type: Array, default: []},
     race: { type: String, default: "human" },
+    // multi-class progress, not a single pick-one-at-creation slot - every
+    // known class gets its own tracked entry (experties + lvl) from the
+    // start, same "always a concrete default, never null/undefined" style
+    // every other field in this schema already follows. experties is one of
+    // the 4 REAL weaponType values client/src/staticRecources/npcDetails.js
+    // actually has (sword/staff/axe/pickaxe) - one each, no two classes
+    // sharing a value, so this field alone is always enough to tell them
+    // apart. Nested {type, default} objects (not bare "sword"/0 literals)
+    // are required here, same reason rank's own pointsToRank sub-field
+    // above uses that form instead of a bare shorthand - mongoose reads a
+    // literal string/number value in this position as an attempt to
+    // declare the PATH's type itself, not a default.
+    characterclass: {
+        warbringer: {
+            experties: { type: String, default: "sword" },
+            lvl: { type: Number, default: 0 },
+        },
+
+        // pickaxe/axe are real weaponType values, but only ever seeded as
+        // gathering-tool items so far (npcDetails.js's "Miner's Edge"/
+        // "Farmer's Axe") - reused here purely for a distinct combat
+        // flavor per class, same as sword/staff already are, not implying
+        // duskrunner/soulmender actually mine or farm with them
+        duskrunner: {
+            experties: { type: String, default: "pickaxe" },
+            lvl: { type: Number, default: 0 },
+        },
+        viking: {
+            experties: { type: String, default: "axe" },
+            lvl: { type: Number, default: 0 },
+        },
+        berserker: {
+            experties: { type: String, default: "fist" },
+            lvl: { type: Number, default: 0 },
+        },
+        paladin: {
+            experties: { type: String, default: "spear" },
+            lvl: { type: Number, default: 0 },
+        },
+        warhammer: {
+            experties: { type: String, default: "hammer" },
+            lvl: { type: Number, default: 0 },
+        },
+        runecaller: {
+            experties: { type: String, default: "staff" },
+            lvl: { type: Number, default: 0 },
+        },
+        necromancer: {
+            experties: { type: String, default: "summoner" },
+            lvl: { type: Number, default: 0 },
+        },
+    },
     characterType: { type: String, default: "player"},
     lastSpoken: {type: String, default: "none"},
     achievements: { type: Array, default: [] },
