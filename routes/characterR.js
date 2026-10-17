@@ -62,7 +62,7 @@ router.post("/save", auth, async (req, res) => {
             skinColor,
             stats: { weapon: 1, accuracy: 1, critical: 1, dex: 1, strength: 1, magic: 1, spd: 3.4, atkSpd: 0.9 },
             lvl: 1,
-            hp: lifeRandomHp, maxHp: lifeRandomHp,
+            hp: lifeRandomHp+4000, maxHp: lifeRandomHp+4000,
             mp: lifeRandomMp, maxMp: lifeRandomMp,
             sp: lifeRandomSp, maxSp: lifeRandomSp,
             defeatedFoes: [
@@ -99,7 +99,7 @@ router.post("/save", auth, async (req, res) => {
                 effects: { effectType: "buff", dmgPm: 0, plusDmg: 0, chance: 0, bashPower: 0 },
                 skillrank: 0,
                 upgradePlus: 60,
-                desc: "You can conceal and show your aura, best to do when you want someone to easily spot you in certain places. Your aura density depends on your magic force.",
+                desc: "You can conceal and show your aura, best to do when you want someone to easily spot you in certain places. It grows with your strength - from faint glitter to a towering blaze as your life, mana and stamina rise - and a darkness aptitude shows in it as black flame.",
             }],
             titles: [],
             currentPlace: { placeId: 10, name: "room", areaType: "room" },
