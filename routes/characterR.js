@@ -43,9 +43,9 @@ router.post("/save", auth, async (req, res) => {
 
         const exists = await Character.findOne({ name })
         if (exists) return res.json("exist")
-        const lifeRandomHp = 100 + (Math.floor(100 * Math.random()))
+        const lifeRandomHp = 150 + (Math.floor(100 * Math.random()))
         const lifeRandomMp = 100 + (Math.floor(100 * Math.random()))
-        const lifeRandomSp = 1000 + (Math.floor(100 * Math.random()))
+        const lifeRandomSp = 300 + (Math.floor(100 * Math.random()))
         const newCharacter = new Character({
             owner,
             name,
@@ -62,7 +62,7 @@ router.post("/save", auth, async (req, res) => {
             skinColor,
             stats: { weapon: 1, accuracy: 1, critical: 1, dex: 1, strength: 1, magic: 1, spd: 3.4, atkSpd: 0.9 },
             lvl: 1,
-            hp: lifeRandomHp+4000, maxHp: lifeRandomHp+4000,
+            hp: lifeRandomHp, maxHp: lifeRandomHp,
             mp: lifeRandomMp, maxMp: lifeRandomMp,
             sp: lifeRandomSp, maxSp: lifeRandomSp,
             defeatedFoes: [

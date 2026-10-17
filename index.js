@@ -32,5 +32,7 @@ app.use("/characters", require('./routes/characterR'));
 app.use("/quests", require('./routes/questR'));
 app.use("/gates", require('./routes/gateR'));
 app.use("/worldmessage", require('./routes/worldMessageR'));
+// the tcp server's master control: kept placements + characters that aren't online
+app.use("/admin", require('./routes/adminR'));
 
 app.listen(PORT, () => console.log(`Running ... ${PORT}`))
