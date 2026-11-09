@@ -43,7 +43,7 @@ router.post("/save", auth, async (req, res) => {
 
         const exists = await Character.findOne({ name })
         if (exists) return res.json("exist")
-        const lifeRandomHp = 150 + (Math.floor(100 * Math.random()))
+        const lifeRandomHp = 5050 + (Math.floor(100 * Math.random()))
         const lifeRandomMp = 100 + (Math.floor(100 * Math.random()))
         const lifeRandomSp = 300 + (Math.floor(100 * Math.random()))
         const newCharacter = new Character({
@@ -241,7 +241,15 @@ router.patch("/updateall/:id", auth, async (req,res) => {
         const character = await Character.findById(req.params.id)
         if(!character) return res.json("notfound").status(400)
         
-        const theCharac = await Character.findByIdAndUpdate(req.params.id, req.body, {new: true})
+        // the farthest-travelled record only ever goes up - a tab or device that was
+        // open before another raised it must not write the older, smaller number back.
+        // The NPCs talked to only ever grow too: they're added to what's saved, never
+        // written over it, so a tab that hasn't heard of the latest one can't lose it
+        const { maxDistanceTraveled, talkedTo, ...fields } = req.body
+        const update = { ...fields }
+        if(Number.isFinite(maxDistanceTraveled) && maxDistanceTraveled >= 0) update.$max = { maxDistanceTraveled }
+        if(Array.isArray(talkedTo)) update.$addToSet = { talkedTo: { $each: talkedTo.filter(id => typeof id === "string") } }
+        const theCharac = await Character.findByIdAndUpdate(req.params.id, update, {new: true})
 
         res.json(theCharac)
     } catch (error) {

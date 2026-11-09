@@ -63,7 +63,7 @@ router.put("/world-state/:name", async (req, res) => {
         if(!data || typeof data !== "object" || Array.isArray(data)) return res.status(400).json({ error: "data must be an object" })
         // only the lists the admin knows about
         const clean = {}
-        for(const kind of ["enemies", "treasures", "grains", "mushrooms"]){
+        for(const kind of ["enemies", "treasures", "grains", "mushrooms", "ores"]){
             clean[kind] = Array.isArray(data[kind]) ? data[kind].slice(0, 5000) : []
         }
         await AdminWorld.findOneAndUpdate({ name: req.params.name }, { name: req.params.name, data: clean }, { upsert: true, new: true, setDefaultsOnInsert: true })

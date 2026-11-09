@@ -66,6 +66,10 @@ const charSchema = new Schema({
     survival: { hunger: {type: Number, default: 100}, sleep: {type: Number, default: 100}, bodytemp: {type: Number, default: 35} },
     aptitude: { type: Array, default: [] },
     monsterKilled: { type: Number, default: 0},
+    // the farthest this character has been from the openworld's spawn, metres - the
+    // Tab list's "Distance Traveled" (client/src/charactersystem/travelRecord.js).
+    // Only ever raised: routes/characterR.js's updateall applies it with $max
+    maxDistanceTraveled: { type: Number, default: 0},
     defeatedMonsters: { type: Array, default: []}, // name of monsters
     blessings: { type: Array, default: [] }, // aka abilities
     // { qName: "", qTitle: "", desc: "", questType: //story//hunt//reqItem }
@@ -75,7 +79,15 @@ const charSchema = new Schema({
     stories:{type: Array, default: []},// for story
     quests: {type: Array, default: []}, //
     clearedQuests: {type: Array, default: []},
+    // the _id (client/src/staticRecources/npcDetails.js) of every NPC whose talk this
+    // character has opened - recorded by client/src/npc/talkedTo.js. Only ever
+    // added to: routes/characterR.js's updateall applies it with $addToSet.
+    talkedTo: { type: [String], default: [] },
     race: { type: String, default: "human" },
+    // what the character has evolved into, and the wings it gave them - set by
+    // the client's charactersystem/evolution.js, which puts the wings back on
+    // whenever the character is built
+    evolution: { evolutionName: String, wingdetail: { wingmodel: String, wingtexture: String } },
     // multi-class progress, not a single pick-one-at-creation slot - every
     // known class gets its own tracked entry (experties + lvl) from the
     // start, same "always a concrete default, never null/undefined" style
@@ -89,9 +101,12 @@ const charSchema = new Schema({
     // literal string/number value in this position as an attempt to
     // declare the PATH's type itself, not a default.
     characterclass: {
+        // every class: its lvl, and `progress` - the swings or casts so far toward
+        // the next one (client/src/charactersystem/characterclass.js)
         warbringer: {
             experties: { type: String, default: "sword" },
             lvl: { type: Number, default: 0 },
+            progress: { type: Number, default: 0 },
         },
 
         // pickaxe/axe are real weaponType values, but only ever seeded as
@@ -102,30 +117,37 @@ const charSchema = new Schema({
         duskrunner: {
             experties: { type: String, default: "pickaxe" },
             lvl: { type: Number, default: 0 },
+            progress: { type: Number, default: 0 },
         },
         viking: {
             experties: { type: String, default: "axe" },
             lvl: { type: Number, default: 0 },
+            progress: { type: Number, default: 0 },
         },
         berserker: {
             experties: { type: String, default: "fist" },
             lvl: { type: Number, default: 0 },
+            progress: { type: Number, default: 0 },
         },
         paladin: {
             experties: { type: String, default: "spear" },
             lvl: { type: Number, default: 0 },
+            progress: { type: Number, default: 0 },
         },
         warhammer: {
             experties: { type: String, default: "hammer" },
             lvl: { type: Number, default: 0 },
+            progress: { type: Number, default: 0 },
         },
         runecaller: {
             experties: { type: String, default: "staff" },
             lvl: { type: Number, default: 0 },
+            progress: { type: Number, default: 0 },
         },
         necromancer: {
             experties: { type: String, default: "summoner" },
             lvl: { type: Number, default: 0 },
+            progress: { type: Number, default: 0 },
         },
     },
     characterType: { type: String, default: "player"},
