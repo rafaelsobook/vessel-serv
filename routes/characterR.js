@@ -43,7 +43,7 @@ router.post("/save", auth, async (req, res) => {
 
         const exists = await Character.findOne({ name })
         if (exists) return res.json("exist")
-        const lifeRandomHp = 5050 + (Math.floor(100 * Math.random()))
+        const lifeRandomHp = 100 + (Math.floor(100 * Math.random()))
         const lifeRandomMp = 100 + (Math.floor(100 * Math.random()))
         const lifeRandomSp = 300 + (Math.floor(100 * Math.random()))
         const newCharacter = new Character({
@@ -75,32 +75,32 @@ router.post("/save", auth, async (req, res) => {
             ],
             x: 0, y: 1, z: -2,
             items: [],
-            skills: [{
-                slotNumber: 1,
-                equiped: true,
-                isActive: false,
-                name: "flexaura",
-                lvl: 1,
-                pointsToClaim: 1,
-                pointsForUpgrade: 1,
-                element: "normal",
-                // requireMode intentionally OMITTED, not set to "any" - skillsui.js's
-                // gate is `if(skill.requireMode && charState.mode !== skill.requireMode)`,
-                // only skipped when requireMode is FALSY. "any" is treated as a literal
-                // required mode (character must be in mode "any", which never happens),
-                // not a wildcard - same footgun documented in skillsData.js.
-                skillType: "na",
-                animationLoop: false,
-                displayName: "Flex aura",
-                castDuration: 10,
-                returnModeDura: 900,
-                skillCoolDown: 2000,
-                demand: [{ name: "mp", minCost: 1, cost: 0.3 }],
-                effects: { effectType: "buff", dmgPm: 0, plusDmg: 0, chance: 0, bashPower: 0 },
-                skillrank: 0,
-                upgradePlus: 60,
-                desc: "You can conceal and show your aura, best to do when you want someone to easily spot you in certain places. It grows with your strength - from faint glitter to a towering blaze as your life, mana and stamina rise - and a darkness aptitude shows in it as black flame.",
-            }],
+            skills: [
+                {
+                    slotNumber: 1,
+                    equiped: true,
+                    isActive: false,
+                    name: "flexaura",
+                    lvl: 1,
+                    pointsToClaim: 1,
+                    pointsForUpgrade: 1,
+                    element: "normal",
+                    starter: true,
+                    // requireMode left out on purpose - see the server's copy
+                    skillType: "na",
+                    animationLoop: false,
+                    displayName: "Flex aura",
+                    castDuration: 10,
+                    returnModeDura: 900,
+                    skillCoolDown: 2000,
+                    demand: [{ name: "mp", minCost: 1, cost: 0.3 }],
+                    // an array here (the server's copy has a bare object) - getSkillEffect
+                    // .find()s over every client skill's effects
+                    effects: [{ effectType: "buff", dmgPm: 0, plusDmg: 0, chance: 0, bashPower: 0 }],
+                    skillrank: 0,
+                    upgradePlus: 60,
+                    desc: "You can conceal and show your aura, best to do when you want someone to easily spot you in certain places. It grows with your strength - from faint glitter to a towering blaze as your life, mana and stamina rise - and a darkness aptitude shows in it as black flame.",
+                }],
             titles: [],
             currentPlace: { placeId: 10, name: "room", areaType: "room" },
             prevPlace: { placeId: 0, name: "na", areaType: "na" },
